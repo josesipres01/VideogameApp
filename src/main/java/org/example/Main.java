@@ -928,13 +928,26 @@ public class Main {
 
                 for (java.util.Map<Integer, String[]> operacionesPorRegistro : operacionesPorTablaRegistro.values()) {
                     for (String[] operacion : operacionesPorRegistro.values()) {
-                        stmt.executeUpdate(operacion[1]);
+                        try {
+                            stmt.executeUpdate(operacion[1]);
+                        } catch (SQLException e) {
+                            System.err.println("Instrucción fallida: " + operacion[1]);
+                            System.err.println("Motivo: " + e.getMessage());
+                            // Continúa con la siguiente
+                        }
                     }
+
                 }
 
                 stmt.execute("SET FOREIGN_KEY_CHECKS = 1");
                 conn.commit();
                 System.out.println("Restauración completada con éxito.");
+
+                // Agregar nuevo CHECKPOINT al log
+                String insertarCheckpoint = "INSERT INTO log (timestamp, user_id, action_type, table_name, record_id, sql_instruction) VALUES (NOW(), NULL, 'CHECKP', NULL, 0, 'Checkpoint después de restauración')";
+                try (PreparedStatement psCheckpointNuevo = conn.prepareStatement(insertarCheckpoint)) {
+                    psCheckpointNuevo.executeUpdate();
+                    }
 
             } catch (SQLException e) {
                 conn.rollback();
