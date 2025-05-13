@@ -26,8 +26,8 @@ public class Main {
     public static void main(String[] args) {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            System.out.println("Driver JDBC cargado correctamente.");
-            System.out.println("ClassLoader del driver en main(): " + Class.forName("com.mysql.jdbc.Driver").getClassLoader());
+            //System.out.println("Driver JDBC cargado correctamente.");
+           // System.out.println("ClassLoader del driver en main(): " + Class.forName("com.mysql.jdbc.Driver").getClassLoader());
 
             // 1) Conectar a la base de datos
             conectarABaseD(DB_IP);
@@ -90,7 +90,7 @@ public class Main {
 
 
                 pstmt.executeUpdate();
-                System.out.println("Registro 'CHECKP' insertado en la tabla log.");
+                //System.out.println("Registro 'CHECKP' insertado en la tabla log.");
             }
         } catch (SQLException e) {
             System.err.println("Error al insertar el registro 'CHECKP': " + e.getMessage());
@@ -143,19 +143,27 @@ public class Main {
         int option;
         do {
             System.out.println("--- MENÚ PRINCIPAL ---");
-            System.out.println("1. Gestionar Usuarios");
+            if (isAdmin) {
+                System.out.println("1. Gestionar Usuarios");
+            }
             System.out.println("2. Gestionar Plataformas");
             System.out.println("3. Gestionar Videojuegos");
             System.out.println("4. Gestionar Colección");
             System.out.println("5. Consultas y Reportes");
-            System.out.println("6. Restaurar Base de Datos");
+            if (isAdmin) {
+                System.out.println("6. Restaurar Base de Datos");
+            }
             System.out.println("0. Salir");
             System.out.print("Elija una opción: ");
             option = Integer.parseInt(scanner.nextLine());
 
             switch (option) {
                 case 1:
-                    gestionarUsuarios();
+                    if (isAdmin) {
+                        gestionarUsuarios();
+                    } else {
+                        System.out.println("Acceso denegado. Solo para administradores.");
+                    }
                     break;
                 case 2:
                     gestionarPlataformas();
@@ -170,7 +178,11 @@ public class Main {
                     gestionarConsultas();
                     break;
                 case 6:
-                    gestionarRestauracion();
+                    if (isAdmin) {
+                        gestionarRestauracion();
+                    } else {
+                        System.out.println("Acceso denegado. Solo para administradores.");
+                    }
                     break;
                 case 0:
                     System.out.println("Saliendo...");
@@ -182,11 +194,13 @@ public class Main {
         } while (option != 0);
     }
 
-    private static void gestionarUsuarios() {
+
+    private static void gestionarUsuarios() throws SQLException {
         System.out.println("--- Gestión de Usuarios ---");
         System.out.println("1. Insertar Usuario");
         System.out.println("2. Modificar Usuario");
         System.out.println("3. Eliminar Usuario");
+        System.out.println("4. Regresar");
         System.out.print("Seleccione una opción: ");
         int subOption = Integer.parseInt(scanner.nextLine());
 
@@ -197,20 +211,22 @@ public class Main {
             case 2:
                 modificarUsuario();
                 break;
-
             case 3:
                 eliminarUsuario();
                 break;
+            case 4:
+                showMainMenu();
             default:
                 System.out.println("Opción no válida en gestión de usuarios.");
         }
     }
 
-    private static void gestionarPlataformas() {
+    private static void gestionarPlataformas() throws SQLException {
         System.out.println("--- Gestionar Plataformas ---");
         System.out.println("1. Insertar Plataforma");
         System.out.println("2. Modificar Plataforma");
         System.out.println("3. Eliminar Plataforma");
+        System.out.println("4. Regresar");
         System.out.print("Seleccione una opcion: ");
         int subOption = Integer.parseInt(scanner.nextLine());
         switch (subOption) {
@@ -223,18 +239,22 @@ public class Main {
             case 3:
                 eliminarPlatform();
                 break;
+            case 4:
+                showMainMenu();
             default:
                 System.out.println("Opción no valida");
 
         }
     }
 
-    public static void gestionarGames() {
+    public static void gestionarGames() throws SQLException {
         System.out.println("--- Gestionar Videojuegos ---");
         System.out.println("1. Insertar Videojuego");
         System.out.println("2. Modificar Videojuego");
         System.out.println("3. Eliminar Videojuego");
+        System.out.println("4. Regresar");
         System.out.print("Seleccione una opcion: ");
+
         int subOption = Integer.parseInt(scanner.nextLine());
         switch (subOption) {
             case 1:
@@ -246,16 +266,19 @@ public class Main {
             case 3:
                 eliminarGame();
                 break;
+            case 4:
+                showMainMenu();
             default:
                 System.out.println("Opción no valida");
         }
     }
 
-    public static void gestionarCollection() {
+    public static void gestionarCollection() throws SQLException {
         System.out.println("--- Gestionar Collections---");
         System.out.println("1. Insertar Collection");
         System.out.println("2. Modificar Collection");
         System.out.println("3. Eliminar Collection");
+        System.out.println("4. Regresar");
         System.out.print("Seleccione una opcion: ");
         int subOption = Integer.parseInt(scanner.nextLine());
         switch (subOption) {
@@ -268,16 +291,19 @@ public class Main {
             case 3:
                 eliminarCollection();
                 break;
+            case 4:
+                showMainMenu();
             default:
                 System.out.println("Opción no valida");
         }
     }
 
-    public static void gestionarConsultas() {
+    public static void gestionarConsultas() throws SQLException {
         System.out.println("--- Ver Consultas y Reportes ---");
         System.out.println("1. Listar Collection");
         System.out.println("2. Listar Videojuego con mayores colecciones");
         System.out.println("3. Top 5 mejores videojuegos");
+        System.out.println("4. Regresar");
         System.out.print("Seleccione una opción: ");
         int subOption = Integer.parseInt(scanner.nextLine());
         switch (subOption) {
@@ -290,6 +316,10 @@ public class Main {
             case 3:
                 top5Games();
                 break;
+            case 4:
+                showMainMenu();
+            default:
+                System.out.println("Opción no valida");
         }
 
 
@@ -310,19 +340,19 @@ public class Main {
             System.out.println("--- MENÚ DE RESTAURACIÓN ---");
             System.out.println("1. Eliminar registros de las tablas");
             System.out.println("2. Restaurar base de datos desde el último checkpoint");
-            System.out.println("0. Regresar al Menú Principal");
+            System.out.println("3. Regresar al Menú Principal");
             System.out.print("Elija una opción: ");
             option = Integer.parseInt(scanner.nextLine());
 
             switch (option) {
                 case 1:
-                    eliminarRegistros(conexion);  // Pasamos la conexión existente
+                    eliminarRegistros(conexion);
                     break;
                 case 2:
                     restaurarDesdeCheckpoint(conexion);
                     break;
-                case 0:
-                    System.out.println("Regresando al Menú Principal...");
+                case 3:
+                    showMainMenu();
                     break;
                 default:
                     System.out.println("Opción inválida.");
