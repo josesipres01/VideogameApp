@@ -2,6 +2,7 @@ Daniela Garcia Lopez
 Jose Guadalupe Venegas Sipres
 
 Nota: Para correr el programa debes tener el JDK 23 como minimo para que funcione correctamente. 
+Nota:Se debe tener en la librerias externas del proyecto el conector a mysql, en este proyecto se usó mysql-connector-java-5.1.48-bin
 
 1. Descargar el proyecto.
 2. Una vez descargado el proyecto, entramos a mysql y creamos la Base de Datos que se llamará "videogame_collection" (CREATE DATABASE "videogame_collection";).
